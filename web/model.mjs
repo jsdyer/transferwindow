@@ -1,7 +1,20 @@
-// Keep transformations separate from the DOM so they can be tested directly.
-export function cleanLines(text) {
-  if (typeof text !== 'string') throw new TypeError('Expected text');
-  const lines = text.split(/\r\n|\r|\n/).map(line => line.trim()).filter(Boolean);
-  const unique = [...new Set(lines)];
-  return { text: unique.join('\n'), count: unique.length, removed: lines.length - unique.length };
+import { serviceSets } from "./schedule.mjs";
+export function departures(data, day, id) {
+  return [
+    ...new Set(
+      serviceSets(data, day).flatMap(({ group, offset }) =>
+        (group[id] || []).map((t) => t + offset),
+      ),
+    ),
+  ].sort((a, b) => a - b);
+}
+export function connections(arrivals, outgoing, from, walk, delay) {
+  return arrivals
+    .filter((t) => t >= from && t < 1440)
+    .map((arrive) => {
+      const first = outgoing.find((t) => t >= arrive + walk);
+      const usable = outgoing.find((t) => t >= arrive + walk + delay);
+      const later = outgoing.find((t) => usable != null && t > usable);
+      return { arrive, first, usable, later };
+    });
 }

@@ -1,16 +1,49 @@
 {
-  "id": "coolcode-tool-template",
-  "title": "CoolCode Tool Starter",
-  "description": "A browser-only example that trims lines and removes exact duplicates.",
-  "category": "security",
-  "tags": ["text", "lines", "duplicates"],
-  "icon": "scan-search",
-  "url": "/coolcode-tool-template/",
-  "source": "https://github.com/jsdyer/coolcode-tool-template",
+  "id": "transferwindow",
+  "title": "Transfer Window",
+  "description": "Compare scheduled route 555 connections, walking time and missed-transfer waits at Carvolth and Lougheed.",
+  "category": "places",
+  "tags": [
+    "TransLink",
+    "Langley",
+    "Carvolth",
+    "Lougheed",
+    "555",
+    "GTFS"
+  ],
+  "icon": "route",
+  "url": "/transferwindow/",
+  "source": "https://github.com/jsdyer/transferwindow",
   "hosting": "project",
   "access": "browser",
   "data_info": {
-    "mode": "local",
-    "detail": "The browser reads the text you paste and compares its lines."
+    "mode": "snapshot",
+    "detail": "TransLink’s static GTFS timetable supplies scheduled 555 arrivals, onward departures, bays and service-date exceptions.",
+    "cadence": "Daily",
+    "probes": [
+      {
+        "label": "Data retrieved",
+        "url": "https://coolcode.ca/transferwindow/data/status.json",
+        "path": [
+          "retrieved"
+        ],
+        "count_at": {
+          "path": [
+            "routes"
+          ],
+          "unit": "transit routes"
+        }
+      },
+      {
+        "label": "Coverage",
+        "url": "https://coolcode.ca/transferwindow/data/status.json",
+        "path": [
+          "start"
+        ],
+        "end_path": [
+          "end"
+        ]
+      }
+    ]
   }
 }

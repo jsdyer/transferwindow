@@ -1,21 +1,29 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import { cleanLines } from '../web/model.mjs';
-test('trims, removes blanks and preserves first-seen order', () => {
-  assert.deepEqual(cleanLines('  Halifax\nLangley\nHalifax\n\nVancouver  '), {
-    text: 'Halifax\nLangley\nVancouver', count: 3, removed: 1,
-  });
+import test from "node:test";
+import assert from "node:assert/strict";
+import { departures, connections } from "../web/model.mjs";
+
+test("walking time, delay and a missed onward service are distinct", () => {
+  assert.deepEqual(connections([480, 485, 1470], [490, 505, 520], 485, 5, 0), [
+    { arrive: 485, first: 490, usable: 490, later: 505 },
+  ]);
+  assert.deepEqual(connections([485], [490, 505, 520], 480, 5, 1), [
+    { arrive: 485, first: 490, usable: 505, later: 520 },
+  ]);
+  assert.equal(connections([485], [490], 480, 5, 1)[0].usable, undefined);
 });
-test('supports Windows and old Mac line endings', () => {
-  assert.equal(cleanLines('a\r\nb\ra').text, 'a\nb');
+
+test("service days may overlap after midnight, duplicate departures count once", () => {
+  const data = {
+    calendar: {
+      "2026-10-01": ["previous"],
+      "2026-10-02": ["today"],
+      "2026-10-03": ["next"],
+    },
+    events: {
+      previous: { rail: [1450] },
+      today: { rail: [10, 300] },
+      next: { rail: [4] },
+    },
+  };
+  assert.deepEqual(departures(data, "2026-10-02", "rail"), [10, 300, 1444]);
 });
-test('empty text and whitespace produce an empty result', () => {
-  assert.deepEqual(cleanLines(' \n\t'), { text: '', count: 0, removed: 0 });
-});
-test('preserves case and Unicode', () => {
-  assert.equal(cleanLines('Québec\nquébec\n東京\nQuébec').text, 'Québec\nquébec\n東京');
-});
-test('treats markup as ordinary text', () => {
-  assert.equal(cleanLines('<script>alert(1)</script>\n<script>alert(1)</script>').text, '<script>alert(1)</script>');
-});
-test('rejects non-text input', () => { assert.throws(() => cleanLines(null), TypeError); });

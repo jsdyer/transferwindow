@@ -1,33 +1,108 @@
 <!doctype html>
 <html lang="en-CA">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="{{DESCRIPTION}}">
-  <title>{{TITLE}} · CoolCode</title>
-  <link rel="stylesheet" href="./style.css">
-  <script type="module" src="./app.mjs"></script>
-</head>
-<body data-tool-id="{{TOOL_ID}}">
-  <a class="skip" href="#main">Skip to content</a>
-  <header><a href="https://coolcode.ca/">← CoolCode.ca</a><a href="{{SOURCE_URL}}">Source &amp; instructions ↗</a></header>
-  <main id="main">
-    <p class="eyebrow">Browser tool starter</p>
-    <h1>{{TITLE}}</h1>
-    <p class="intro">{{DESCRIPTION}}</p>
-    <section aria-labelledby="example-title">
-      <h2 id="example-title">Clean a list</h2>
-      <p>Trim spaces, skip blank lines and remove exact duplicates. Capitalization stays distinct.</p>
-      <div class="panels">
-        <div><label for="input">Your lines</label><textarea id="input" rows="10" maxlength="100000" spellcheck="false" placeholder="Paste one item per line"></textarea></div>
-        <div><label for="output">Cleaned lines</label><textarea id="output" rows="10" readonly spellcheck="false"></textarea></div>
-      </div>
-      <div class="actions"><button id="sample" type="button">Load example</button><button id="clear" type="button">Clear</button><button id="copy" type="button" hidden>Copy result</button></div>
-      <p id="status" role="status" aria-live="polite">Paste a list to begin.</p>
-      <noscript><p>This tool needs JavaScript to process your text. The source is available above.</p></noscript>
-    </section>
-    <aside aria-label="Privacy"><strong>Stays on your device.</strong> This example makes no API requests and does not save your text. Reloading clears it.</aside>
-  </main>
-  <footer>Part of <a href="https://coolcode.ca/">the CoolCode collection</a>.</footer>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{{TITLE}} · CoolCode</title>
+    <meta name="description" content="{{DESCRIPTION}}" />
+    <link rel="stylesheet" href="./style.css" />
+    <script type="module" src="./app.mjs"></script>
+  </head>
+  <body data-tool="{{TOOL_ID}}">
+    <header>
+      <nav>
+        <a href="https://coolcode.ca/#places">← CoolCode.ca</a
+        ><a href="{{SOURCE_URL}}#readme">Sources and guide ↗</a>
+      </nav>
+    </header>
+    <main>
+      <h1>{{TITLE}}</h1>
+      <p class="lead">{{DESCRIPTION}}</p>
+      <p id="edition" class="edition"></p>
+      <section class="report">
+        <h2>Compare a connection</h2>
+        <div class="filters">
+          <label
+            >Exchange<select id="hub">
+              <option value="Lougheed">Lougheed Station</option>
+              <option value="Carvolth">Carvolth Exchange</option>
+            </select></label
+          ><label
+            >Transfer<select id="orientation">
+              <option value="from555">Arrive on the 555</option>
+              <option value="to555">Board the 555</option>
+            </select></label
+          >
+        </div>
+        <div class="filters">
+          <label>Arriving service<select id="in"></select></label
+          ><label>Onward service<select id="out"></select></label>
+        </div>
+        <div class="filters">
+          <label>Service date<input id="date" type="date" /></label
+          ><label
+            >From Pacific time<input
+              id="time"
+              type="time"
+              value="08:00" /></label
+          ><label
+            >Walking allowance<select id="walk">
+              <option value="5">5 min</option>
+              <option value="2">2 min</option>
+              <option value="3">3 min</option>
+              <option value="7">7 min</option>
+              <option value="10">10 min</option>
+              <option value="15">15 min</option>
+              <option value="0">0 min</option>
+            </select></label
+          ><label
+            >Arrival delay<select id="delay">
+              <option value="0">0 min</option>
+              <option value="2">2 min</option>
+              <option value="5">5 min</option>
+              <option value="10">10 min</option>
+              <option value="15">15 min</option>
+              <option value="20">20 min</option>
+            </select></label
+          >
+        </div>
+        <p id="finding" class="finding" role="status"></p>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Scheduled arrival</th>
+                <th>Onward after walk</th>
+                <th>Onward with delay</th>
+                <th>Extra wait if missed</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+        <p class="note">
+          Times are scheduled. Choose a walking allowance for your own transfer.
+          Bay and platform labels come from the feed. The last column shows the
+          time until the following departure after the connection with delay.
+        </p>
+      </section>
+      <noscript>Enable JavaScript to explore the data.</noscript>
+      <footer>
+        <a
+          href="https://www.translink.ca/about-us/doing-business-with-translink/app-developer-resources/gtfs/gtfs-data"
+          >GTFS schedule and terms ↗</a
+        >
+        <p>
+          Route and arrival data used in this product or service is provided by
+          permission of TransLink. TransLink assumes no responsibility for the
+          accuracy or currency of the Data used in this product or service.
+        </p>
+        <p>
+          <a href="https://coolcode.ca/routemirror/"
+            >See 555 directional crowding in Route Mirror</a
+          >
+        </p>
+      </footer>
+    </main>
+  </body>
 </html>
