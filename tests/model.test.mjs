@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { clock } from "../web/schedule.mjs";
 import { departures, connections } from "../web/model.mjs";
 
 test("walking time, delay and a missed onward service are distinct", () => {
@@ -26,4 +27,14 @@ test("service days may overlap after midnight, duplicate departures count once",
     },
   };
   assert.deepEqual(departures(data, "2026-10-02", "rail"), [10, 300, 1444]);
+});
+
+test("a weekday-only onward route can next depart on Monday", () => {
+  const data = {
+    calendar: { "2026-11-20": ["friday"], "2026-11-23": ["monday"] },
+    events: { friday: {}, monday: { bus: [331, 355] } },
+  };
+  const times = departures(data, "2026-11-20", "bus", true);
+  assert.deepEqual(times, [3 * 1440 + 331, 3 * 1440 + 355]);
+  assert.equal(clock(times[0]), "5:31 am (+3 days)");
 });

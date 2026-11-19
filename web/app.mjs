@@ -61,7 +61,7 @@ try {
       return;
     }
     const arr = departures(data, day, by("in").value),
-      dep = departures(data, day, by("out").value);
+      dep = departures(data, day, by("out").value, true);
     const windows = connections(arr, dep, mins(by("time").value), walk, delay);
     const fmt = (t) => (t == null ? "No later service in snapshot" : clock(t));
     if (!windows.length) {

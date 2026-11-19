@@ -1,8 +1,8 @@
 import { serviceSets } from "./schedule.mjs";
-export function departures(data, day, id) {
+export function departures(data, day, id, searchThroughEnd = false) {
   return [
     ...new Set(
-      serviceSets(data, day).flatMap(({ group, offset }) =>
+      serviceSets(data, day, searchThroughEnd).flatMap(({ group, offset }) =>
         (group[id] || []).map((t) => t + offset),
       ),
     ),

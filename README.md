@@ -8,7 +8,7 @@ Try a 555 arrival at Lougheed, select your onward train, then add a five-minute 
 
 ## Reading the records
 
-The importer keeps stop visits at Carvolth Exchange and route 555, Expo Line and Millennium Line calls at Lougheed. The direction selector pairs one 555 leg with a different service. Options identify the trip headsign and bay or platform. The calculation chooses the first departure at or after scheduled arrival plus walking allowance, then repeats with the simulated delay. The final column measures the gap to the next distinct departure if that connection is missed. Only permitted boarding/alighting calls count. Weekly calendars, date-specific exceptions and trips continuing past midnight determine service. The feed limits the available date range. Walking allowances are personal estimates. Scheduled connections do not measure actual reliability.
+The importer keeps stop visits at Carvolth Exchange and route 555, Expo Line and Millennium Line calls at Lougheed. The direction selector pairs one 555 leg with a different service. Options identify the trip headsign and bay or platform. The calculation chooses the first departure at or after scheduled arrival plus walking allowance, then repeats with the simulated delay. The final column measures the gap to the next distinct departure if that connection is missed. Only permitted boarding/alighting calls count. Weekly calendars, date-specific exceptions and trips continuing past midnight determine service. Onward searches continue to the end of the feed. A day offset marks the next available departure even when a service takes a weekend break. Walking allowances are personal estimates. Scheduled connections do not measure actual reliability.
 
 ## Sources and maintenance
 

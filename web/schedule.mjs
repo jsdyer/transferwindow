@@ -2,13 +2,14 @@ export function clock(minutes) {
   const n = ((minutes % 1440) + 1440) % 1440;
   const hh = Math.floor(n / 60),
     mm = String(n % 60).padStart(2, "0");
+  const days = Math.floor(minutes / 1440);
   return (
     (hh % 12 || 12) +
     ":" +
     mm +
     " " +
     (hh < 12 ? "am" : "pm") +
-    (minutes >= 1440 ? " (+1 day)" : "")
+    (days > 0 ? ` (+${days} ${days === 1 ? "day" : "days"})` : "")
   );
 }
 export function adjacent(day, offset) {
@@ -24,13 +25,18 @@ export function localToday() {
     day: "2-digit",
   }).format(new Date());
 }
-export function serviceSets(data, day) {
-  return [-1, 0, 1].flatMap((offset) =>
-    (data.calendar[adjacent(day, offset)] || []).map((id) => ({
-      group: data.events[id],
-      offset: offset * 1440,
-    })),
-  );
+export function serviceSets(data, day, searchThroughEnd = false) {
+  const previous = adjacent(day, -1),
+    next = adjacent(day, 1);
+  const first = Date.parse(day);
+  return Object.entries(data.calendar)
+    .filter(([date]) => date >= previous && (searchThroughEnd || date <= next))
+    .flatMap(([date, services]) =>
+      services.map((id) => ({
+        group: data.events[id],
+        offset: (Date.parse(date) - first) / 60000,
+      })),
+    );
 }
 export function chooseDate(data) {
   const today = localToday();
