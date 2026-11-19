@@ -46,6 +46,13 @@
               type="time"
               value="08:00" /></label
           ><label
+            >Arrival window<select id="duration">
+              <option value="1440">Until midnight</option>
+              <option value="60">1 hour</option>
+              <option value="120">2 hours</option>
+              <option value="240">4 hours</option>
+            </select></label
+          ><label
             >Walking allowance<select id="walk">
               <option value="5">5 min</option>
               <option value="2">2 min</option>
@@ -66,6 +73,17 @@
             </select></label
           >
         </div>
+        <h3>What does a delay cost?</h3>
+        <p id="window-summary" role="status"></p>
+        <div class="scroll">
+          <table aria-label="Delay comparison for the arrival window">
+            <thead><tr><th>Arrival delay</th><th>Keep connection</th><th>Take later departure</th><th>No later departure in feed</th><th>Median extra time¹</th><th>Longest extra time¹</th></tr></thead>
+            <tbody id="impacts"></tbody>
+          </table>
+        </div>
+        <p class="note">¹ Among arrivals that switch departures, measured from the original onward departure to the new one. Select a delay to see the affected connections below.</p>
+        <h3>Individual connections</h3>
+        <p id="worst"></p>
         <p id="finding" class="finding" role="status"></p>
         <div class="scroll">
           <table>

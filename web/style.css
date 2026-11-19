@@ -221,3 +221,8 @@ footer {
     grid-template-columns: 2.8rem 1fr;
   }
 }
+
+.tablelink[aria-pressed="true"] {
+  color: white;
+  background: var(--ink);
+}

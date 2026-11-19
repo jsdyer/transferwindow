@@ -1,6 +1,6 @@
-import { by, options, row, read } from "./ui.mjs";
+import { by, options, row, read, node } from "./ui.mjs";
 import { clock, chooseDate, mins } from "./schedule.mjs";
-import { departures, connections } from "./model.mjs";
+import { departures, connections, delayImpact } from "./model.mjs";
 try {
   const data = await read("schedule"),
     date = by("date");
@@ -55,6 +55,9 @@ try {
       walk = Number(by("walk").value),
       delay = Number(by("delay").value);
     by("rows").replaceChildren();
+    by("impacts").replaceChildren();
+    by("worst").textContent = "";
+    by("window-summary").textContent = "";
     if (!day || day < data.start || day > data.end || !by("time").value) {
       by("finding").textContent =
         "Choose a date within this timetable and an arrival time.";
@@ -62,12 +65,48 @@ try {
     }
     const arr = departures(data, day, by("in").value),
       dep = departures(data, day, by("out").value, true);
-    const windows = connections(arr, dep, mins(by("time").value), walk, delay);
+    const from = mins(by("time").value);
+    const until = Math.min(1440, from + Number(by("duration").value));
+    const forDelay = (minutes) => connections(arr, dep, from, walk, minutes, until);
+    const windows = forDelay(delay);
     const fmt = (t) => (t == null ? "No later service in snapshot" : clock(t));
     if (!windows.length) {
       by("finding").textContent =
-        "No scheduled arrivals for this selection after your chosen time.";
+        "No scheduled arrivals for this service in the selected window.";
+      by("window-summary").textContent = "There are no arrival times to compare.";
       return;
+    }
+    const selected = delayImpact(windows);
+    const minutes = (value) => value == null ? "—" : value + " min";
+    by("window-summary").textContent = windows.length + " scheduled arrival times from " +
+      clock(from) + " to before " + clock(until) + ". " +
+      (windows.length - selected.missingBaseline) + " have an onward departure after the " +
+      walk + "-minute walk. " + selected.missingBaseline +
+      " have no baseline departure in this timetable.";
+    for (const choice of by("delay").options) {
+      const simulated = Number(choice.value);
+      if (simulated === 0) continue;
+      const impact = simulated === delay ? selected : delayImpact(forDelay(simulated));
+      const tr = row([choice.text, impact.kept, impact.shifted, impact.missingLater,
+        minutes(impact.median), minutes(impact.worst)]);
+      const button = node("button", choice.text, "tablelink");
+      button.type = "button";
+      button.setAttribute("aria-label", "Apply a " + simulated + "-minute arrival delay");
+      button.setAttribute("aria-pressed", String(simulated === delay));
+      button.addEventListener("click", () => {
+        by("delay").value = choice.value;
+        draw();
+        by("impacts").querySelector('[aria-pressed="true"]').focus();
+      });
+      tr.firstChild.replaceChildren(button);
+      by("impacts").append(tr);
+    }
+    if (selected.worst != null) {
+      const times = selected.worstArrivals;
+      by("worst").textContent = "The largest shift with a " + delay + "-minute delay is " +
+        minutes(selected.worst) + ". It affects " + times.length +
+        (times.length === 1 ? " arrival" : " arrivals") + ", " +
+        (times.length === 1 ? "at " : "starting at ") + clock(times[0]) + ".";
     }
     const first = windows[0];
     by("finding").textContent =
@@ -96,7 +135,7 @@ try {
       routeOptions();
       draw();
     });
-  for (const id of ["in", "out", "date", "time", "walk", "delay"])
+  for (const id of ["in", "out", "date", "time", "duration", "walk", "delay"])
     by(id).addEventListener("change", draw);
   routeOptions();
   draw();

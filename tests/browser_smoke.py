@@ -31,7 +31,12 @@ def main():
                 page.goto(f"http://127.0.0.1:{server.server_port}/transferwindow/")
                 page.locator("#rows tr").first.wait_for()
                 assert "connect at" in page.locator("#finding").inner_text()
-                page.select_option("#delay","20")
+                page.select_option("#duration", "120")
+                assert page.locator("#impacts tr").count() == 5
+                page.get_by_role("button", name="Apply a 20-minute arrival delay").click()
+                assert page.locator("#delay").input_value() == "20"
+                assert "baseline" in page.locator("#window-summary").inner_text()
+                page.select_option("#duration", "1440")
                 page.select_option("#hub","Carvolth")
                 page.select_option("#orientation","to555")
                 assert "555" in page.locator("#out option:checked").inner_text()
