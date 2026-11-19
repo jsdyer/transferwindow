@@ -38,3 +38,23 @@ test("a weekday-only onward route can next depart on Monday", () => {
   assert.deepEqual(times, [3 * 1440 + 331, 3 * 1440 + 355]);
   assert.equal(clock(times[0]), "5:31 am (+3 days)");
 });
+
+import { delayImpact } from "../web/model.mjs";
+
+test("delay impact uses the same half-open arrival window across scenarios", () => {
+  const arrivals = [479, 480, 489, 490, 500, 506, 511, 540, 1440];
+  const outgoing = [490, 495, 509, 510];
+  const subset = connections(arrivals, outgoing, 480, 0, 6, 540);
+  assert.deepEqual(subset.map((r) => r.arrive), [480, 489, 490, 500, 506, 511]);
+  assert.deepEqual(delayImpact(subset), {
+    kept: 2, shifted: 2, missingBaseline: 1, missingLater: 1,
+    median: 12, worst: 19, worstArrivals: [490],
+  });
+  assert.equal(delayImpact(connections(arrivals, outgoing, 480, 0, 0, 540)).median, null);
+});
+
+test("midnight truncates arrivals but onward shifts can cross midnight", () => {
+  const windows = connections([1430, 1440], [1435, 1460], 1430, 5, 1, 1500);
+  assert.equal(windows.length, 1);
+  assert.equal(delayImpact(windows).worst, 25);
+});

@@ -1,7 +1,7 @@
 {
   "id": "transferwindow",
   "title": "Transfer Window",
-  "description": "Compare scheduled route 555 connections, walking time and missed-transfer waits at Carvolth and Lougheed.",
+  "description": "See how many scheduled 555 transfers survive a delay at Carvolth or Lougheed and how much time a missed connection adds.",
   "category": "places",
   "tags": [
     "TransLink",
