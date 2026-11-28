@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { clock } from "../web/schedule.mjs";
-import { departures, connections } from "../web/model.mjs";
+import { departures, connections, carvolthEvening } from "../web/model.mjs";
 
 test("walking time, delay and a missed onward service are distinct", () => {
   assert.deepEqual(connections([480, 485, 1470], [490, 505, 520], 485, 5, 0), [
@@ -57,4 +57,20 @@ test("midnight truncates arrivals but onward shifts can cross midnight", () => {
   const windows = connections([1430, 1440], [1435, 1460], 1430, 5, 1, 1500);
   assert.equal(windows.length, 1);
   assert.equal(delayImpact(windows).worst, 25);
+});
+
+test("Carvolth preset resolves service names and finds a covered weekday", () => {
+  const data = {
+    labels: [
+      ["Carvolth", "501", "501 Surrey Central Station", "Bay 4", "out"],
+      ["Carvolth", "501", "501 Langley Centre", "Bay 3", "out"],
+      ["Carvolth", "555", "555 Port Mann Exp/To Carvolth Exchange", "Bay 1", "in"],
+    ],
+    calendar: {"2026-11-28": ["a"], "2026-11-30": ["b"], "2026-12-01": ["a"]},
+    events: {a: {1: [990], 2: [980]}, b: {2: [972]}},
+  };
+  assert.deepEqual(carvolthEvening(data, "2026-11-28"), {day: "2026-12-01", incoming: 2, onward: 1});
+  assert.equal(carvolthEvening(data, "2026-12-02"), null);
+  data.labels[1][2] = "501 Langley Centre via 202A St";
+  assert.equal(carvolthEvening(data, "2026-11-28"), null);
 });

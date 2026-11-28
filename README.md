@@ -12,6 +12,8 @@ The importer keeps stop visits at Carvolth Exchange and route 555, Expo Line and
 
 The delay comparison includes distinct arrival times in the chosen window on the selected Pacific date. The start is inclusive and the end is exclusive, capped at midnight. Onward departures may occur on later dates. Each delay scenario uses the same arrivals and walking allowance. An arrival keeps its connection if it can still reach its original onward departure. The median and longest extra times use only arrivals with a known later departure and measure the difference between the two departure times. Arrivals without a baseline departure, or with a baseline but no reachable delayed departure before the feed ends, are counted separately.
 
+The [weekday Carvolth connection](https://coolcode.ca/transferwindow/?connection=carvolth-555-to-501) opens the first upcoming Monday–Friday date in the feed with a 4–5 p.m. 555 arrival and a reachable same-day 501 Langley Centre departure. The example starts with a five-minute walk and a five-minute arrival delay. The [worked transfer guide](https://coolcode.ca/field-notes/carvolth-555-to-501-connection/) preserves the November 30, 2026 calculation.
+
 ## Sources and maintenance
 
 [TransLink static GTFS schedule, update policy and terms](https://www.translink.ca/about-us/doing-business-with-translink/app-developer-resources/gtfs/gtfs-data). The published snapshot includes retrieval dates in UTC and its source coverage. The page filters the downloaded data on the device and does not transmit selections.

@@ -1,6 +1,6 @@
 import { by, options, row, read, node } from "./ui.mjs";
-import { clock, chooseDate, mins } from "./schedule.mjs";
-import { departures, connections, delayImpact } from "./model.mjs";
+import { clock, chooseDate, localToday, mins } from "./schedule.mjs";
+import { departures, connections, delayImpact, carvolthEvening } from "./model.mjs";
 try {
   const data = await read("schedule"),
     date = by("date");
@@ -137,7 +137,25 @@ try {
     });
   for (const id of ["in", "out", "date", "time", "duration", "walk", "delay"])
     by(id).addEventListener("change", draw);
+  const requested = new URLSearchParams(location.search).get("connection");
+  const example = requested === "carvolth-555-to-501" && carvolthEvening(data, localToday());
+  if (example) {
+    by("hub").value = "Carvolth";
+    by("orientation").value = "from555";
+    date.value = example.day;
+    by("time").value = "16:00";
+    by("duration").value = "60";
+    by("walk").value = "5";
+    by("delay").value = "5";
+  } else if (requested === "carvolth-555-to-501") {
+    by("preset-note").textContent = "This timetable has no matching upcoming weekday 555-to-501 connection at Carvolth from 4 to 5 p.m. Select another trip below.";
+    by("preset-note").hidden = false;
+  }
   routeOptions();
+  if (example) {
+    by("in").value = String(example.incoming);
+    by("out").value = String(example.onward);
+  }
   draw();
 } catch {
   by("finding").textContent =

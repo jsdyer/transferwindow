@@ -40,3 +40,21 @@ export function delayImpact(windows) {
     worstArrivals: shifts.filter((s) => s.added === worst).map((s) => s.arrive),
   };
 }
+
+export function carvolthEvening(data, today) {
+  const incoming = data.labels.findIndex(([hub, route, , , role]) =>
+    hub === "Carvolth" && route === "555" && role === "in");
+  const onward = data.labels.findIndex(([hub, route, name, , role]) =>
+    hub === "Carvolth" && route === "501" && role === "out" && name === "501 Langley Centre");
+  if (incoming === -1 || onward === -1) return null;
+
+  for (const day of Object.keys(data.calendar).sort()) {
+    const weekday = new Date(day + "T12:00:00Z").getUTCDay();
+    if (day < today || weekday === 0 || weekday === 6) continue;
+    const arrivals = departures(data, day, incoming).filter(t => t >= 960 && t < 1020);
+    if (!arrivals.length) continue;
+    const usable = departures(data, day, onward).some(t => t >= arrivals[0] + 5 && t < 1440);
+    if (usable) return {day, incoming, onward};
+  }
+  return null;
+}
